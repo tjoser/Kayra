@@ -1,7 +1,53 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kayra_stores/screens/homePage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isPasswordVisible = false; // Initialize as not visible
+
+  Future<void> login() async {
+    final String apiUrl = 'https://apibeta.kayra.com/api/Users/Login';
+
+    final Map<String, dynamic> requestData = {
+      "CellPhone": "string",
+      "EMail": emailController.text,
+      "Password": passwordController.text,
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestData),
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              "Giriş başarısız oldu. Lütfen kimlik bilgilerinizi kontrol edin."),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +82,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
+                    controller: emailController,
                     textAlign: TextAlign.center,
                     decoration: const InputDecoration(
                       hintText: "Mail",
@@ -55,16 +102,39 @@ class LoginPage extends StatelessWidget {
                   color: Colors.white,
                 ),
                 child: Center(
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                      hintText: "Şifre",
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 15.0,
+                  child: Stack(
+                    alignment:
+                        Alignment.centerRight, // Align the icon to the right
+                    children: [
+                      TextFormField(
+                        controller: passwordController,
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          hintText: "Şifre",
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15.0,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                        obscureText: !isPasswordVisible, // Toggle visibility
                       ),
-                      border: InputBorder.none,
-                    ),
-                    obscureText: true,
+                      IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: isPasswordVisible
+                              ? Color(0xFFF690B0)
+                              : Colors.grey,
+                        ),
+                        onPressed: () {
+                          // Toggle the password visibility
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -76,12 +146,7 @@ class LoginPage extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      },
+                      onPressed: login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF690B0),
                         shape: RoundedRectangleBorder(
