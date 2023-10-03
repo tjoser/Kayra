@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:kayra_stores/screens/homePage.dart';
 import 'package:http/http.dart' as http;
@@ -146,7 +144,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: login,
+                      onPressed: () {
+                        login();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF690B0),
                         shape: RoundedRectangleBorder(
