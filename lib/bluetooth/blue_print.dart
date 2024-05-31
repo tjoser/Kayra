@@ -5,17 +5,10 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 extension WriteLarge on BluetoothCharacteristic {
   Future<void> writeLarge(List<int> value, int mtu, {int timeout = 15}) async {
     int chunk = mtu - 3;
-    /*print("mtu: $mtu");
-    print("chunk: $chunk");
-    print(value.toString());*/
+
     try {
       for (int i = 0; i < value.length; i += chunk) {
-/*      print("i: $i");
-        print("i+chunk = ${i += chunk}");
-        print("value.length: ${value.length}");
-        print("min value: ${min(value.length, i + chunk)}");*/
         List<int> subvalue = value.sublist(i, min(value.length, i + chunk));
-        // print("subvalue length: ${subvalue.length}");
         await write(subvalue, withoutResponse: false, timeout: timeout);
       }
     } catch (e) {
@@ -53,9 +46,9 @@ class BluePrint {
         .toList();
     print("data length: ${data.length}");
     print(data.toString());
-    data.forEach((element) {
+    for (var element in data) {
       print(element.length);
-    });
+    }
     for (var i = 0; i < services.length; i++) {
       if (services[i].properties.writeWithoutResponse) {
         if (await _tryPrint(services[i], data, await device.mtu.first)) {
@@ -72,7 +65,6 @@ class BluePrint {
   ) async {
     for (var i = 0; i < data.length; i++) {
       try {
-        // await charac.write(data[i]);
         await charac.writeLarge(data[i], mtuSize);
       } catch (e) {
         print(e.toString());

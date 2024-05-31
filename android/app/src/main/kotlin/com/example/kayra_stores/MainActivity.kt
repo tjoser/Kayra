@@ -1,4 +1,4 @@
-package com.example.kayra_stores
+package com.kayra_stores
 
 import io.flutter.embedding.android.FlutterActivity
 

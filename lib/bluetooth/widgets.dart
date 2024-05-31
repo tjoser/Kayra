@@ -1,7 +1,3 @@
-// Copyright 2023, Charles Weinberger & Paul DeMarco.
-// All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -92,12 +88,12 @@ class ScanResultTile extends StatelessWidget {
       title: _buildTitle(context),
       leading: Text(result.rssi.toString()),
       trailing: ElevatedButton(
-        child: const Text('Bağlan'),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          backgroundColor: const Color(0xFFDEFCFE),
         ),
         onPressed: (result.advertisementData.connectable) ? onTap : null,
+        child: const Text('Bağlan'),
       ),
     );
   }
